@@ -89,6 +89,41 @@ begin
 end;
 go;
 
---
+---- Mostrar la cantidad de pago realizadas por mes durante el año 2023
+create procedure Pago_2023
+as 
+begin
+    select count(Pago_id) Cantidad,month(fecha) [Mes]
+    from Pago
+    join Pago_CitaMedica D on Pago.id = D.Pago_id
+    where year(fecha) = 2023
+    group by month(fecha)
+end;
+
+go;
+--Mostrar la cantidad de Medico por cada Especialidad
+   select Especialidad, cout(*) as cantidad from Medico
+   group by Especialidad;
+go;
+--Mostrar usuario con más citaMedica
+ 
+ create function [dbo].[usuario_mas_CitaMedica]() returns table mas
+ return
+ (
+    select*from(select p.nombre, count(c.id) as cantidad_CitaMedica from CitaMedica c
+    inner join usuario p on c.usuario_id = p.id
+    group by p.nombre) t where t.cantidad_CitaMedica =(
+    select top 1 count(c.id) as cantidad_CitaMedica from CitaMedica c
+    group by c.usuario_id
+    order by cantidad_CitaMedica desc)
+  );
+select * from dbo.usuario_mas_CitaMedica()
+go;
+--Obtener numero de medicos por cada especialidad
+SELECT NombreEspecialidad, COUNT(*) MedicoID
+ FROM Medico as m
+ join Especialidad as e on m.EspecialidadID = e.EspecialidadID
+ GROUP BY NombreEspecialidad;
+
 
 
